@@ -1,19 +1,16 @@
 # SageMaker lab
-<!-- TOC -->
-
 - [SageMaker lab](#sagemaker-lab)
 - [Introduction](#introduction)
 - [Jupyter Notebooks in SageMaker](#jupyter-notebooks-in-sagemaker)
-- [Lab: Getting started](#lab-getting-started)
-- [Lab 1. Builtin XGBoost model with the Iris dataset](#lab-1-builtin-xgboost-model-with-the-iris-dataset)
-    - [Splitting the data-set](#splitting-the-data-set)
-    - [Training with XGBoost](#training-with-xgboost)
-    - [Inference with trained XGBoost model](#inference-with-trained-xgboost-model)
+  - [# Lab: Getting started](#-lab-getting-started)
+  - [# Lab 1. Builtin XGBoost model with the Iris dataset](#-lab-1-builtin-xgboost-model-with-the-iris-dataset)
+  - [Splitting the data-set](#splitting-the-data-set)
+  - [Training with XGBoost](#training-with-xgboost)
+  - [Inference with trained XGBoost model](#inference-with-trained-xgboost-model)
 - [Lab 2. Batch predicition with previously trained model](#lab-2-batch-predicition-with-previously-trained-model)
-- [Lab 3. CI/CD for SageMaker models](#lab-3-cicd-for-sagemaker-models)
-    - [Training and Deployment Pipeline](#training-and-deployment-pipeline)
-
-<!-- /TOC -->
+- [Lab 3. BYOA/BYOC with scikit-learn and the Iris dataset](#lab-3-byoabyoc-with-scikit-learn-and-the-iris-dataset)
+  - [Container 'contract'](#container-contract)
+  - [Publish to ECR and deploy as SageMaker endpoint](#publish-to-ecr-and-deploy-as-sagemaker-endpoint)
 
 # Introduction
 
@@ -29,19 +26,16 @@ We will follow the lab by using pre-created Jupyter notebooks that are installed
 
 More on Jupyter Notebooks here: https://jupyter-notebook-beginner-guide.readthedocs.io/en/latest/what_is_jupyter.html.
 
-SageMaker provides a managed environment to run your notebooks, and via the SageMaker notebook **instance role** and pre-installed libraries makes it easy to integrate the notebook code to the AWS resources and environment. 
+Amazon SageMaker and Amazon SageMaker Studio provide an IDE to help you run your ML tasks and edit and run your Jupyter notebooks on managed infrastructure. 
 
 # Lab: Getting started
 -----
 
-Open SageMaker in your AWS console, make sure to select the 'Frankfurt' (eu-central-1) region. On the left navigate to notebooks where you will see a running notebook. Press 'Open Jupyter Lab'.
+Open SageMaker in your AWS console, make sure to select the correct region. On the left navigate to SageMaker Studio. Click on the created user, and on the button to 'Open Studio'.
 
-<div align=left><img src='images/sm_console.png' width=1024 /></div>
-
-And follow along by opening the notebook files in order:
+Clone this repository and follow along by opening the notebook files in order:
 
 <div align=left><img src='images/sm_notebooks.png' width=260 /></div>
-
 
 # Lab 1. Builtin XGBoost model with the Iris dataset
 -----
@@ -60,15 +54,13 @@ We will take the labeled iris samples we have and split them into a training and
 
 ## Training with XGBoost
 
-    Note: When retrieveing the sagemaker docker container we are specifying latest as the version - this will get the XGBoost release 0.72 by default and you will see a warning for a newer version available. If you want to migrate to the current version you have to specify repo_version='0.90-2' in the get_image_uri function.
-
 The Amazon SageMaker implementation of XGBoost supports CSV and libsvm formats for training and inference. We will use CSV and have to specify it since the default is libsvm.
 
 After creating our SageMaker estimater class, and passing it the XGBoost docker image as a parameter, we will start the training after setting some XGBoost-specific parameters. 
 
 Note that it takes more time to fetch the training container and start the training instance than the actual training - *you are only billed for the training seconds however*.
 
-    Note: When doing iterations on the training configuration, it might be useful to use SageMaker 'localmode' (https://aws.amazon.com/blogs/machine-learning/use-the-amazon-sagemaker-local-mode-to-train-on-your-notebook-instance/). This will pull the needed container for training/inference to the Notebook instance and will run much faster the following iterations, and avoid creating a **training job** in SageMaker each time. You can then do the final heavy training with all the data in the SageMaker **training job** when you have finished prototyping.
+    Note: When doing iterations on the training configuration, it might be useful to use SageMaker 'localmode' (https://aws.amazon.com/blogs/machine-learning/use-the-amazon-sagemaker-local-mode-to-train-on-your-notebook-instance/). This will pull the needed container for training/inference to the Notebook instance and will run much faster the following iterations, and avoid creating a **training job** in SageMaker each time. You can then do the final heavy training with all the data in the SageMaker **training job** when you have finished prototyping. This is currently not supported in SageMaker Studio however.
 
 You can see your training job in the SageMaker console. In our bucket, you will see a new compressed object with the output/ key - this is the trained model that will be used for inference.
 
