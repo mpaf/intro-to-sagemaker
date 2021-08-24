@@ -33,9 +33,7 @@ Amazon SageMaker and Amazon SageMaker Studio provide an IDE to help you run your
 
 Open SageMaker in your AWS console, make sure to select the correct region. On the left navigate to SageMaker Studio. Click on the created user, and on the button to 'Open Studio'.
 
-Clone this repository and follow along by opening the notebook files in order:
-
-<div align=left><img src='images/sm_notebooks.png' width=260 /></div>
+Clone this repository and follow along by opening the notebook files in order.
 
 # Lab 1. Builtin XGBoost model with the Iris dataset
 -----
