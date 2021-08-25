@@ -2,11 +2,12 @@
 - [SageMaker lab](#sagemaker-lab)
 - [Introduction](#introduction)
 - [Jupyter Notebooks in SageMaker](#jupyter-notebooks-in-sagemaker)
-  - [# Lab: Getting started](#-lab-getting-started)
-  - [# Lab 1. Builtin XGBoost model with the Iris dataset](#-lab-1-builtin-xgboost-model-with-the-iris-dataset)
+- [Getting started with the lab](#getting-started-with-the-lab)
+- [Lab 1. Builtin XGBoost model with the Iris dataset](#lab-1-builtin-xgboost-model-with-the-iris-dataset)
   - [Splitting the data-set](#splitting-the-data-set)
   - [Training with XGBoost](#training-with-xgboost)
   - [Inference with trained XGBoost model](#inference-with-trained-xgboost-model)
+- [Lab 1a. Using the XGBoost as a Framework with SageMaker](#lab-1a-using-the-xgboost-as-a-framework-with-sagemaker)
 - [Lab 2. Batch predicition with previously trained model](#lab-2-batch-predicition-with-previously-trained-model)
 - [Lab 3. BYOA/BYOC with scikit-learn and the Iris dataset](#lab-3-byoabyoc-with-scikit-learn-and-the-iris-dataset)
   - [Container 'contract'](#container-contract)
@@ -28,15 +29,13 @@ More on Jupyter Notebooks here: https://jupyter-notebook-beginner-guide.readthed
 
 Amazon SageMaker and Amazon SageMaker Studio provide an IDE to help you run your ML tasks and edit and run your Jupyter notebooks on managed infrastructure. 
 
-# Lab: Getting started
------
+# Getting started with the lab
 
 Open SageMaker in your AWS console, make sure to select the correct region. On the left navigate to SageMaker Studio. Click on the created user, and on the button to 'Open Studio'.
 
 Clone this repository and follow along by opening the notebook files in order.
 
 # Lab 1. Builtin XGBoost model with the Iris dataset
------
 
 With SageMaker, there are three main ways to do machine learning:
 
@@ -73,6 +72,30 @@ For predicting results from a data sample one can use the AWS SDK (boto3 for Pyt
 **Important** Take note of the model name used from the endpoint configuration, we will use it in the next lab. 
 
 After running the inference with the deployed endpoint it's time to clean up!
+
+# Lab 1a. Using the XGBoost as a Framework with SageMaker
+
+When training with the SageMaker built-in XGBoost container as a framework, we provide the entry-point script as well as an optional source directory with extra modules. The two different ways to run SageMaker XGBoost are described at: https://docs.aws.amazon.com/sagemaker/latest/dg/xgboost.html.
+
+More details on training with XGBoost as a framework here:
+
+https://sagemaker.readthedocs.io/en/stable/using_xgboost.html
+
+The code with details on the contents of the XGBoost framework container is at:
+
+https://github.com/aws/sagemaker-xgboost-container
+
+When executed on SageMaker a number of helpful environment variables are available to access properties of the training environment, such as:
+ 
+- SM_MODEL_DIR: A string representing the path to the directory to write model artifacts to. Any artifacts saved in this folder are uploaded to S3 for model hosting after the training job completes.
+- SM_OUTPUT_DIR: A string representing the filesystem path to write output artifacts to. Output artifacts may include checkpoints, graphs, and other files to save, not including model artifacts. These artifacts are compressed and uploaded to S3 to the same S3 prefix as the model artifacts.
+
+Supposing two input channels, 'train' and 'validation', were used in the call to the XGBoost estimator's fit() method, the following environment variables will be set, following the format SM_CHANNEL_[channel_name]:
+
+- SM_CHANNEL_TRAIN: A string representing the path to the directory containing data in the 'train' channel
+- SM_CHANNEL_VALIDATION: Same as above, but for the 'validation' channel.
+
+A typical training script loads data from the input channels, configures training with hyperparameters, trains a model, and saves a model to model_dir so that it can be hosted later. Hyperparameters are passed to your script as arguments and can be retrieved with an argparse.ArgumentParser instance.
 
 # Lab 2. Batch predicition with previously trained model
 
